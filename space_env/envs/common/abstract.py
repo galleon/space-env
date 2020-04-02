@@ -295,4 +295,3 @@ class AbstractEnv(gym.Env):
             else:
                 setattr(result, k, None)
         return result
-    

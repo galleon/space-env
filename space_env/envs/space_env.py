@@ -1,7 +1,7 @@
 from gym.envs.registration import register
 
 from space_env import utils
-from space_env.env.common.abstract import AbstractEnv
+from space_env.envs.common.abstract import AbstractEnv
 from space_env.spacecraft.control import MDPSpacecraft
 
 class SpaceEnv(AbstractEnv):
@@ -20,7 +20,7 @@ class SpaceEnv(AbstractEnv):
         config.update({
             "observation":{
                 "type": "Kinematics"
-            }
+            },
             "duration": 40,
             "spacecrafts_count": 2,
             "collision_reward": self.COLLISION_REWARD

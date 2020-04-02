@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='space-env',
-    version='1.0.dev0',
+    version='0.1.dev0',
     description='An environment for simulated space flying tasks',
     url='https://github.com/galleon/space-env',
     author='Guillaume Alleon',
@@ -13,6 +13,7 @@ setup(
         'Intended Audience :: Researchers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
+
         'Programming Language :: Python :: 3.7',
     ],
 

@@ -1,1 +1,1 @@
-from RLPygame.envs.space_env import *
+from space_env.envs.space_env import *
