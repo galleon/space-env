@@ -5,6 +5,10 @@ from gym.utils import seeding
 
 class AbstractEnv(gym.Env):
     """
+    A generic environment for various tasks.
+    The environment contains a space populated with spacecrafts, and a controlled ego-vehicle that can change direction
+        and velocity. The action space is fixed, but the observation space and reward function must be defined in the
+        environment implementations.
     """
     metadata = {'render.modes': ['human', 'rgb_array']}
 
@@ -18,7 +22,7 @@ class AbstractEnv(gym.Env):
 
     SIMULATION_FREQUENCY = 15
 
-    PERCEPTION_DISTANCE = 6.0 * MDP...
+    PERCEPTION_DISTANCE = 6.0
 
     def __init__(self, config=None):
         self.config = self.defaulf_config()
@@ -54,6 +58,7 @@ class AbstractEnv(gym.Env):
 
         self.reset()
 
+    @classmethod
     def default_config(cls):
         """
             Default environment configuration.
@@ -166,8 +171,8 @@ class AbstractEnv(gym.Env):
                 # Forward action to the spacecraft
                 self.spacecraft.act(self.ACTIONS[action])
 
-            self.road.act()
-            self.road.step(1 / self.SIMULATION_FREQUENCY)
+            self.space.act()
+            self.space.step(1 / self.SIMULATION_FREQUENCY)
             self.time += 1
 
             # Automatically render intermediate simulation steps if a viewer has been launched
@@ -223,19 +228,12 @@ class AbstractEnv(gym.Env):
         """
             Get the list of currently available actions.
 
-            Lane changes are not available on the boundary of the road, and velocity changes are not available at
-            maximal or minimal velocity.
-
         :return: the list of available actions
         """
         actions = [self.ACTIONS_INDEXES['IDLE']]
-        for l_index in self.road.network.side_lanes(self.spacecraft.lane_index):
-            if l_index[2] < self.spacecraft.lane_index[2] \
-                    and self.road.network.get_lane(l_index).is_reachable_from(self.spacecraft.position):
-                actions.append(self.ACTIONS_INDEXES['LEFT'])
-            if l_index[2] > self.spacecraft.lane_index[2] \
-                    and self.road.network.get_lane(l_index).is_reachable_from(self.spacecraft.position):
-                actions.append(self.ACTIONS_INDEXES['RIGHT'])
+
+        # Shall we also restrict LEFT & RIGHT actions ?
+
         if self.spacecraft.velocity_index < self.spacecraft.SPEED_COUNT - 1:
             actions.append(self.ACTIONS_INDEXES['FASTER'])
         if self.spacecraft.velocity_index > 0:
@@ -260,21 +258,21 @@ class AbstractEnv(gym.Env):
 
     def simplify(self):
         """
-            Return a simplified copy of the environment where distant spacecrafts have been removed from the road.
+            Return a simplified copy of the environment where distant spacecrafts have been removed from the space.
 
             This is meant to lower the policy computational load while preserving the optimal actions set.
 
         :return: a simplified environment state
         """
         state_copy = copy.deepcopy(self)
-        state_copy.road.spacecrafts = [state_copy.spacecraft] + state_copy.road.close_spacecrafts_to(
+        state_copy.space.spacecrafts = [state_copy.spacecraft] + state_copy.space.close_spacecrafts_to(
             state_copy.spacecraft, self.PERCEPTION_DISTANCE)
 
         return state_copy
 
     def randomize_behaviour(self):
         env_copy = copy.deepcopy(self)
-        for v in env_copy.road.spacecrafts:
+        for v in env_copy.space.spacecrafts:
             if isinstance(v, IDMspacecraft):
                 v.randomize_behavior()
         return env_copy

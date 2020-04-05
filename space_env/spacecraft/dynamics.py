@@ -9,11 +9,11 @@ class Spacecraft(Loggable):
 
        The state of the object is propagated depending on its sterring and acceleration  actions
        The spacecraft has a triangle shape
-    """"
+    """
 
     COLLISION_ENABLED = True
 
-    """ Maximum reachable velocity [m/s] """"
+    """ Maximum reachable velocity [m/s] """
     MAX_VELOCITY = 70
     """ spacecraft length [m] """
     LENGTH = 9.0

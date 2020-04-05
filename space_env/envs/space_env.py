@@ -2,7 +2,7 @@ from gym.envs.registration import register
 
 from space_env import utils
 from space_env.envs.common.abstract import AbstractEnv
-from space_env.spacecraft.control import MDPSpacecraft
+#from space_env.spacecraft.control import MDPSpacecraft
 
 class SpaceEnv(AbstractEnv):
     """
